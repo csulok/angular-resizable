@@ -171,8 +171,8 @@ angular.module('angularResizable', [])
                             dragStart(e, direction);
                         }
                     };
-                    grabber.addEventListener('mousedown', down, false);
-                    grabber.addEventListener('touchstart', down, false);
+                    angular.element(grabber).on('mousedown', down);
+                    angular.element(grabber).on('touchstart', down);
                 });
             }
         };
