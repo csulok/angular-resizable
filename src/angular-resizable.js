@@ -56,11 +56,14 @@ angular.module('angularResizable', [])
                     info = {};
 
                 var updateInfo = function(e) {
-                    info.width = false; info.height = false;
-                    if(axis === 'x')
+                    info.width = false;
+                    info.height = false;
+                    if (axis.x) {
                         info.width = parseInt(element[0].style[scope.rFlex ? flexBasis : 'width']);
-                    else
+                    }
+                    if (axis.y) {
                         info.height = parseInt(element[0].style[scope.rFlex ? flexBasis : 'height']);
+                    }
                     info.id = element[0].id;
                     info.evt = e;
                 };
@@ -74,23 +77,33 @@ angular.module('angularResizable', [])
                 };
 
                 var dragging = function(e) {
-                    var prop, offset = axis === 'x' ? start - getClientX(e) : start - getClientY(e);
+                    var prop;
+                    var offset = {
+                        x: start.x - getClientX(e),
+                        y: start.y - getClientY(e)
+                    };
                     switch(dragDir) {
+                        case 'corner':
+                            prop = scope.rFlex ? flexBasis : 'height';
+                            element[0].style[prop] = h + (offset.y * vy) + 'px';
+                            prop = scope.rFlex ? flexBasis : 'width';
+                            element[0].style[prop] = w + (offset.x * vx) + 'px';
+                            break;
                         case 'top':
                             prop = scope.rFlex ? flexBasis : 'height';
-                            element[0].style[prop] = h + (offset * vy) + 'px';
+                            element[0].style[prop] = h + (offset.y * vy) + 'px';
                             break;
                         case 'bottom':
                             prop = scope.rFlex ? flexBasis : 'height';
-                            element[0].style[prop] = h - (offset * vy) + 'px';
+                            element[0].style[prop] = h - (offset.y * vy) + 'px';
                             break;
                         case 'right':
                             prop = scope.rFlex ? flexBasis : 'width';
-                            element[0].style[prop] = w - (offset * vx) + 'px';
+                            element[0].style[prop] = w - (offset.x * vx) + 'px';
                             break;
                         case 'left':
                             prop = scope.rFlex ? flexBasis : 'width';
-                            element[0].style[prop] = w + (offset * vx) + 'px';
+                            element[0].style[prop] = w + (offset.x * vx) + 'px';
                             break;
                     }
                     updateInfo(e);
@@ -115,8 +128,17 @@ angular.module('angularResizable', [])
                 };
                 var dragStart = function(e, direction) {
                     dragDir = direction;
-                    axis = dragDir === 'left' || dragDir === 'right' ? 'x' : 'y';
-                    start = axis === 'x' ? getClientX(e) : getClientY(e);
+                    axis = {};
+                    if (dragDir === "left" || dragDir === "right" || dragDir === "corner") {
+                        axis.x = true;
+                    }
+                    if (dragDir === "top" || dragDir === "bottom" || dragDir === "corner") {
+                        axis.y = true;
+                    }
+                    start = {
+                        x: getClientX(e),
+                        y: getClientY(e)
+                    };
                     w = parseInt(style.getPropertyValue('width'));
                     h = parseInt(style.getPropertyValue('height'));
 
@@ -152,6 +174,9 @@ angular.module('angularResizable', [])
                         var disabled = (scope.rDisabled === 'true');
                         if (!disabled && (e.which === 1 || e.touches)) {
                             // left mouse click or touch screen
+                            if (direction.indexOf("-") !== -1) {
+                                direction = "corner";
+                            } 
                             dragStart(e, direction);
                         }
                     };
