@@ -82,30 +82,24 @@ angular.module('angularResizable', [])
                         x: start.x - getClientX(e),
                         y: start.y - getClientY(e)
                     };
-                    switch(dragDir) {
-                        case 'corner':
-                            prop = scope.rFlex ? flexBasis : 'height';
-                            element[0].style[prop] = h + (offset.y * vy) + 'px';
-                            prop = scope.rFlex ? flexBasis : 'width';
-                            element[0].style[prop] = w + (offset.x * vx) + 'px';
-                            break;
-                        case 'top':
-                            prop = scope.rFlex ? flexBasis : 'height';
-                            element[0].style[prop] = h + (offset.y * vy) + 'px';
-                            break;
-                        case 'bottom':
-                            prop = scope.rFlex ? flexBasis : 'height';
-                            element[0].style[prop] = h - (offset.y * vy) + 'px';
-                            break;
-                        case 'right':
-                            prop = scope.rFlex ? flexBasis : 'width';
-                            element[0].style[prop] = w - (offset.x * vx) + 'px';
-                            break;
-                        case 'left':
-                            prop = scope.rFlex ? flexBasis : 'width';
-                            element[0].style[prop] = w + (offset.x * vx) + 'px';
-                            break;
+                    
+                    if (/left/.test(dragDir)) {
+                        prop = scope.rFlex ? flexBasis : 'width';
+                        element[0].style[prop] = w + (offset.x * vx) + 'px';
                     }
+                    if (/right/.test(dragDir)) {
+                        prop = scope.rFlex ? flexBasis : 'width';
+                        element[0].style[prop] = w - (offset.x * vx) + 'px';
+                    }
+                    if (/top/.test(dragDir)) {
+                        prop = scope.rFlex ? flexBasis : 'height';
+                        element[0].style[prop] = h + (offset.y * vy) + 'px';
+                    }
+                    if (/bottom/.test(dragDir)) {
+                        prop = scope.rFlex ? flexBasis : 'height';
+                        element[0].style[prop] = h - (offset.y * vy) + 'px';
+                    }
+                    
                     updateInfo(e);
                     function resizingEmit(){
                         scope.$emit('angular-resizable.resizing', info);
@@ -129,10 +123,10 @@ angular.module('angularResizable', [])
                 var dragStart = function(e, direction) {
                     dragDir = direction;
                     axis = {};
-                    if (dragDir === "left" || dragDir === "right" || dragDir === "corner") {
+                    if (/left|right/.test(dragDir)) {
                         axis.x = true;
                     }
-                    if (dragDir === "top" || dragDir === "bottom" || dragDir === "corner") {
+                    if (/top|bottom/.test(dragDir)) {
                         axis.y = true;
                     }
                     start = {
@@ -174,9 +168,6 @@ angular.module('angularResizable', [])
                         var disabled = (scope.rDisabled === 'true');
                         if (!disabled && (e.which === 1 || e.touches)) {
                             // left mouse click or touch screen
-                            if (direction.indexOf("-") !== -1) {
-                                direction = "corner";
-                            } 
                             dragStart(e, direction);
                         }
                     };
