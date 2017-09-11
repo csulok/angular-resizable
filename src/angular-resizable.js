@@ -133,8 +133,19 @@ angular.module('angularResizable', [])
                         x: getClientX(e),
                         y: getClientY(e)
                     };
-                    w = parseInt(style.getPropertyValue('width'));
-                    h = parseInt(style.getPropertyValue('height'));
+                    
+                    if (scope.rFlex) {
+                        w = parseInt(style.getPropertyValue('flex-basis')) || 0;
+                    }
+                    if (!scope.rFlex || w == 0) {
+                        w = parseInt(style.getPropertyValue('width'));
+                    }
+                    if (scope.rFlex) {
+                        h = parseInt(style.getPropertyValue('flex-basis')) || 0;
+                    }
+                    if (!scope.rFlex || h == 0) {
+                        h = parseInt(style.getPropertyValue('height'));
+                    }
 
                     //prevent transition while dragging
                     element.addClass('no-transition');
