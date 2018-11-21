@@ -174,6 +174,7 @@ angular.module('angularResizable', [])
                     grabber.innerHTML = inner;
                     element[0].appendChild(grabber);
                     grabber.ondragstart = function() { return false; };
+                    grabber.addEventListener("click", function(e) { e.stopPropagation(); return false; });
 
                     var down = function(e) {
                         var disabled = (scope.rDisabled === 'true');
