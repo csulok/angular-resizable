@@ -111,7 +111,7 @@ angular.module('angularResizable', [])
                     }
                 };
                 var dragEnd = function(e) {
-                    updateInfo();
+                    updateInfo(e);
                     scope.$emit('angular-resizable.resizeEnd', info);
                     scope.$apply();
                     document.removeEventListener('mouseup', dragEnd, false);
